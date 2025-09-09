@@ -1,11 +1,17 @@
 import streamlit as st
-from Generate_Recommendations import Generator
-from ImageFinder.ImageFinder import get_images_links as find_image
+
+from ..Generate_Recommendations import Generator
+
+from ..ImageFinder.ImageFinder import get_images_links as find_image
+
 import pandas as pd
+
 from streamlit_echarts import st_echarts
 
 st.set_page_config(page_title="Custom Food Recommendation", page_icon="🔍",layout="wide")
+
 nutrition_values=['Calories','FatContent','SaturatedFatContent','CholesterolContent','SodiumContent','CarbohydrateContent','FiberContent','SugarContent','ProteinContent']
+
 if 'generated' not in st.session_state:
     st.session_state.generated = False
     st.session_state.recommendations=None
