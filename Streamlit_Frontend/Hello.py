@@ -11,6 +11,6 @@ st.sidebar.success("Select a recommendation app.")
 
 st.markdown(
     """
-    A web app that provides personalized diet suggestions using content-based filtering. Built with Scikit-Learn, FastAPI, and Streamlit.
+    💻 ML Magic | 🔍 NearestNeighbors Vibes | ⚖️ BMI Tracker | 🍎 Calorie Crunch | 🥗 Smart Diet Picks | ⚡ FastAPI Backend | 🎨 Streamlit Frontend
     """
 )
