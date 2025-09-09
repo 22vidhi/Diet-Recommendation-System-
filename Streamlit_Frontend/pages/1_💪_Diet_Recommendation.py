@@ -1,10 +1,8 @@
 import streamlit as st
 import pandas as pd
-import sys
-sys.path.append('..')
-from Generate_Recommendations import Generator
+from ..Generate_Recommendations import Generator
 
-from ImageFinder.ImageFinder import get_images_links as find_image
+from ..ImageFinder.ImageFinder import get_images_links as find_image
 from streamlit_echarts import st_echarts
 
 st.set_page_config(page_title="Automatic Diet Recommendation", page_icon="💪",layout="wide")

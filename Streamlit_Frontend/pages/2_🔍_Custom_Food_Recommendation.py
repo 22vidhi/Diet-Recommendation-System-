@@ -1,10 +1,8 @@
 import streamlit as st
 
-import sys
-sys.path.append('..')
-from Generate_Recommendations import Generator
+from ..Generate_Recommendations import Generator
 
-from ImageFinder.ImageFinder import get_images_links as find_image
+from ..ImageFinder.ImageFinder import get_images_links as find_image
 
 import pandas as pd
 
