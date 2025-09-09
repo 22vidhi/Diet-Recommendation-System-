@@ -1,10 +1,17 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="Diet Recommendation System",
-    page_icon="💪",
+    page_title="Hello",
+    page_icon="👋",
     layout="wide"
 )
 
-# This is the main entry point for the Streamlit app
-# Pages will be automatically loaded from the 'pages' directory
+st.write("# Welcome to Diet Recommendation System! 👋")
+
+st.sidebar.success("Select a recommendation app.")
+
+st.markdown(
+    """
+    💻 ML Magic | 🔍 NearestNeighbors Vibes | ⚖️ BMI Tracker | 🍎 Calorie Crunch | 🥗 Smart Diet Picks | ⚡ FastAPI Backend | 🎨 Streamlit Frontend
+    """
+)
