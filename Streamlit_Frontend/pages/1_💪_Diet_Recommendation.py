@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import random
 import sys
 sys.path.append('..')
 
@@ -7,9 +8,267 @@ from Streamlit_Frontend.Generate_Recommendations import Generator
 from Streamlit_Frontend.ImageFinder.ImageFinder import get_images_links as find_image
 from streamlit_echarts import st_echarts
 
-st.set_page_config(page_title="Automatic Diet Recommendation", page_icon="💪",layout="wide")
+st.set_page_config(page_title="Automatic Diet Recommendation", page_icon="💪", layout="wide")
 
+def rnd(a, b): return random.randrange(a, b+1)
 
+# Custom CSS for modern styling
+st.markdown("""
+<style>
+/* Global Styles */
+body {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
+  font-family: 'Inter', sans-serif;
+}
+
+.card {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 20px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.2), 0 0 30px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  transition: all 0.2s ease-in-out;
+  background: #fefefe;
+}
+
+.form-input:focus {
+  transform: scale(1.02);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 245, 0.1);
+  outline: none;
+}
+
+.checkbox-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.checkbox-item {
+  padding: 0.75rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  text-align: center;
+  font-weight: 500;
+}
+
+.checkbox-item:hover {
+  border-color: #3b82f6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.checkbox-item.selected {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+  color: #065f46;
+}
+
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 0.5rem;
+  border-radius: 5px;
+  background: linear-gradient(to right, #e5e7eb, #3b82f6);
+  outline: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease-in-out;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.gradient-button {
+  background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 1rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 100%;
+}
+
+.gradient-button:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #059669 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
+}
+
+.gradient-button:active {
+  transform: translateY(0);
+}
+
+.title-text {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #1f2937;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.title-underline {
+  width: 100px;
+  height: 4px;
+  background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+  margin: 0 auto 3rem auto;
+  border-radius: 2px;
+}
+
+.medical-card {
+  background: linear-gradient(135deg, #fef3c7 0%, #fbbf24 50%, #f59e0b 100%);
+  color: #92400e;
+  border: 2px solid #f59e0b;
+}
+
+.danger-card {
+  background: linear-gradient(135deg, #fecaca 0%, #f87171 50%, #ef4444 100%);
+  color: #991b1b;
+  border: 2px solid #ef4444;
+}
+
+.success-card {
+  background: linear-gradient(135deg, #d1fae5 0%, #34d399 50%, #10b981 100%);
+  color: #065f46;
+  border: 2px solid #10b981;
+}
+
+.normal-card {
+  background: linear-gradient(135deg, #dbeafe 0%, #93c5fd 50%, #3b82f6 100%);
+  color: #1e3a8a;
+  border: 2px solid #3b82f6;
+}
+
+.expander-header {
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.recipe-card {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1rem;
+  transition: all 0.2s ease;
+}
+
+.recipe-card:hover {
+  transform: scale(0.98);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-section {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.metric-card {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 768px) {
+  .checkbox-container {
+    grid-template-columns: 1fr;
+  }
+
+  .title-text {
+    font-size: 2.5rem;
+  }
+}
+
+.sidebar {
+  background: white;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar .sidebar-item {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease-in-out;
+  margin-bottom: 0.5rem;
+}
+
+.sidebar .sidebar-item:hover {
+  background: #f1f5f9;
+  transform: translateX(5px);
+}
+
+.sidebar .sidebar-active {
+  background: linear-gradient(135deg, #dbeafe 0%, #93c5fd 50%);
+  box-shadow: inset 0 0 0 2px #3b82f6;
+}
+</style>
+""", unsafe_allow_html=True)
 
 nutritions_values=['Calories','FatContent','SaturatedFatContent','CholesterolContent','SodiumContent','CarbohydrateContent','FiberContent','SugarContent','ProteinContent']
 # Streamlit states initialization
@@ -257,11 +516,11 @@ with st.form("recommendation_form"):
     weight_loss=display.weights[display.plans.index(option)]
     number_of_meals=st.slider('Meals per day',min_value=3,max_value=5,step=1,value=3)
     if number_of_meals==3:
-        meals_calories_perc={'breakfast':0.35,'lunch':0.40,'dinner':0.25}
+        meals_calories_perc={'breakfast':0.35,'launch':0.40,'dinner':0.25}
     elif number_of_meals==4:
-        meals_calories_perc={'breakfast':0.30,'morning snack':0.05,'lunch':0.40,'dinner':0.25}
+        meals_calories_perc={'breakfast':0.30,'morning snack':0.05,'launch':0.40,'dinner':0.25}
     else:
-        meals_calories_perc={'breakfast':0.30,'morning snack':0.05,'lunch':0.40,'afternoon snack':0.05,'dinner':0.20}
+        meals_calories_perc={'breakfast':0.30,'morning snack':0.05,'launch':0.40,'afternoon snack':0.05,'dinner':0.20}
     generated = st.form_submit_button("Generate")
 if generated:
     st.session_state.generated=True
